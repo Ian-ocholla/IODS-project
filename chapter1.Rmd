@@ -3,11 +3,11 @@
 
 *Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
 
-# How are you _feeling_ right now?  
+### How are you _feeling_ right now?  
 
 I am excited to have enrolled **Open Data Science**    
 
-## What do you expect to learn?  
+### What do you expect to learn?  
 
 
 I look forward to learn    
@@ -19,6 +19,7 @@ I look forward to learn
 
 I heard about it ~~*in 1905*~~ through an email from [**DONASCI**]( ds-natural-sciences-students@helsinki.fi )   
 
+My github [link](https://github.com/Ian-ocholla)
 
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
