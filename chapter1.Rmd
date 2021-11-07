@@ -7,7 +7,7 @@
 
 I am excited to have enrolled **Open Data Science**    
 
-## What do you expect to **learn?**  
+### What do you expect to **learn?**  
 
 
 I look forward to learn    
@@ -15,7 +15,7 @@ I look forward to learn
 * Data analysis  
 * Prediction  
 
-### Where did you hear about the course?  
+#### Where did you hear about the course?  
 
 I heard about it ~~*in 1905*~~ through an email from [**DONASCI**]( ds-natural-sciences-students@helsinki.fi )   
 
