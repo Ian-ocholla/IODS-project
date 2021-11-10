@@ -1,4 +1,4 @@
-# Insert chapter 2 title here
+# Regression and model validation
 
 *Describe the work you have done this week and summarize your learning.*
 
@@ -7,7 +7,110 @@
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
 
 ```{r}
-date()
+#set the working directory of your R session the IODS project folder
+setwd("Z:/Courses/Open data science/R/IODS-project")
+
+students2014<-read.csv("Data/learning2014.csv", header = TRUE, stringsAsFactors = TRUE)
 ```
 
-Here we go again...
+Explore the data structure and its dimensions
+
+```{r}
+str(students2014)
+dim(students2014)
+
+
+```
+The data contains 166 observations of 7 variables. 
+Two of the factors are integers (age and points), four numericals (attitude, deep, stra and surf), while gender variable is a factor
+
+```{r}
+
+
+
+```
+
+
+### Graphical overview and summaries of the variables in the data
+```{r}
+summary(students2014)
+
+```
+The summary shows the descriptive statistics of the numerics and integers, while showing the distribution of male and female in the gender variable
+
+#### visualizing  student attitude aganist exam points
+```{r}
+library(ggplot2)
+#initialize plot with data and aesthetic mapping
+p1<- ggplot(students2014, aes( x= attitude, y= points, col = gender))
+#define the visualization type (points)
+p2<- p1 + geom_point()
+#draw the plot
+p2
+#add a regression line
+p3<- p2+geom_smooth(method = "lm")
+#add a main title and draw the plot
+p4<- p3 + ggtitle("student's attitude versus exam points")
+p4
+```
+
+### Scatterplot matrix of the variables in the data
+```{r}
+# exclude the gender variable from the matrix
+pairs(students2014[-1], col = students2014$gender)
+#access the GGally and ggplot2 libraries
+library(GGally)
+library(ggplot2)
+#create a more advanced plot matrix with ggpairs()
+p<- ggpairs(students2014, mapping = aes (col = gender, alpha = 0.3), lower = list(combo = wrap("facethist", bins = 20)))
+#draw the plot
+p
+
+```
+
+
+
+### fit a regression model
+A regression model is divided into three parts and it follows the equation below
+$$Y \sim X\beta_0+X\beta_1 +\epsilon $$  
+
+
+  * where **Y** is the target variable 
+  * $X\beta_0+X\beta_1$ is the systematic part of the model 
+  * $\beta$ quantifies the realtionship between **y* and **x**.
+  * $\epsilon$ describes the errors
+  
+The exaam point has been used as the target variables while surface learning, strategic learning and age have be used as dependent variables in the mode
+
+```{r}
+my_model<- lm(points~ surf+stra+age, data = students2014)
+
+```
+summary of the model
+```{r}
+summary(my_model)
+
+```
+comment and interpret the results.
+Explain and interpret the statistical test related to the model parameters
+
+using a summary of the fitted model, explain the relationship between the chosen explanatory variables and the target variable(interpret the model parameters). Explain and interpret the multiple R squared of the model
+
+###Diagnostic plots
+####Residual vs Fitted values
+```{r}
+summary(my_model)
+
+```
+Explain the assumption of the model and interpret the validity of those assumptions based on the diagnostic plots
+
+####Normal QQ-plot and Residuals vs Leverage
+```{r}
+summary(my_model)
+
+```
+Explain the assumption of the model and interpret the validity of those assumptions based on the diagnostic plots
+
+
+
+Here were fo
