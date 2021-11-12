@@ -6,18 +6,30 @@
 - Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using.  
 
-### Introduction to the data  
+## Introduction to the data  
 In this work space, a student feedback data(more information [here](www.mv.helsinki.fi/home/knehkala/JYTmooc/JYTOPKYS3-meta.txt)) collected between 2014-2015 was used to asses the relationship between learning approaches and the students achievement in an introductory statistics course. This dataset will be used to develop a linear regression model and interpret the results.  
 
-### Load the data into your Rworkspace from your work directory
+### 1. Load the data into your Rworkspace from your work directory  
+
+The first step to creating a work directory where we have stored our data
+
 ```{r}
+
 #set the working directory of your R session the IODS project folder
 setwd("Z:/Courses/Open data science/R/IODS-project")
-#Read the file and ensure the header= TRUE and stringAsFactors=TRUE to ensure that the factor are not displayed as strings
+
+```
+
+We load the dataset from the folder saved from Data wrangling exercise.We read the file adding that the header= TRUE and stringAsFactors=TRUE to ensure that the factor variables are not displayed as strings.
+
+```{r}
+
 students2014<-read.csv("Data/learning2014.csv", header = TRUE, stringsAsFactors = TRUE)
 ```
 
-Explore the data structure and its dimensions
+### 2. Data exploration and analysis
+
+We explore the data structure and its dimensions
 
 ```{r}
 str(students2014)
@@ -34,14 +46,13 @@ The data contains 166 observations of 7 variables. The observations refers to th
 ```
 
 
-### Graphical overview and summaries of the variables in the data
+#### Graphical overview and summaries of the variables in the data
 ```{r}
 summary(students2014)
 
 ```
 The mean age of the students in the class is 25 years, with female students being almost twice more than the male students in the course.
 
-#plotting several barplots for visualization in scatter plot
 
 #### Visualizing  student attitude aganist exam points
 ```{r}
@@ -60,7 +71,7 @@ p4<- p3 + ggtitle("student's attitude versus exam points")
 p4
 ```
 
-**Scatterplot matrix of the variables in the data**
+Scatterplot matrix of the variables in the data
 
 ```{r}
 # exclude the gender variable from the matrix
@@ -69,7 +80,7 @@ pairs(students2014[-1], col = students2014$gender)
 ```
 
 
-**Create advanced plot matrix with ggpairs()**
+Create advanced plot matrix with ggpairs()
 ```{r}
 #Access the GGally and ggplot2 libraries
 library(GGally)
@@ -86,7 +97,7 @@ p
 From the scatter plot, across both gender the attitude of the student is highly correlated to the exam points attained. While there is higher likelihood of male students failing in deep learning compared to female students
 
 
-### Regression model
+### 3.Regression model
 Linear regression model is a statistical approach that is used for modelling relationships between a dependent variable **y** and one or more explanatory variables **X**. If there is only one explanatory variable then its called simple linear regression while in more than one variable it is referred as multiple linear regression.  
 Linear model is divided into two parts namely systematic and stochastic parts. The model follows the equation below
 $$Y \sim \propto + X\beta_1+X\beta_2.....\beta_k +\epsilon $$  
@@ -134,16 +145,7 @@ The R-squared also known as coefficient of determination ($R^2$) statistics prov
 Adjusted R-squared is shows what percentage of the variation within the dependent variable that all predictors  are explaining.
 
 
-
-
-model assumptions
-an obvious assumption is linearity.
-the target variable is modeled as a linear combination of the model parameters
-assumed that the errors are normally distributed
-
-
-
-### Diagnostic plots
+### 4. Diagnostic plots
 Three diagnostic plots were plotted from the model  
 
 1. Residual Vs Fitted  
