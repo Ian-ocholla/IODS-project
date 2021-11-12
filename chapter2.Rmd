@@ -5,11 +5,13 @@
 - Describe your work and results clearly. 
 - Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
-
+### Introduction to the data
+In this work space, a student feedback data(more information [here](www.mv.helsinki.fi/home/knehkala/JYTmooc/JYTOPKYS3-meta.txt)) collected between 2014-2015 that was used to asses the relationship between learning approaches and the students achievement in an introductory statistics course ,will be used for analysis within different variables in the data set and develop a linear regression
+### Load the data into your Rworkspace from your work directory
 ```{r}
 #set the working directory of your R session the IODS project folder
 setwd("Z:/Courses/Open data science/R/IODS-project")
-
+#Read the file and ensure the header= TRUE and stringAsFactors=TRUE to ensure that the factor are not displayed as strings
 students2014<-read.csv("Data/learning2014.csv", header = TRUE, stringsAsFactors = TRUE)
 ```
 
@@ -21,8 +23,7 @@ dim(students2014)
 
 
 ```
-The data contains 166 observations of 7 variables. 
-Two of the factors are integers (age and points), four numericals (attitude, deep, stra and surf), while gender variable is a factor
+The data contains 166 observations of 7 variables. The observations refers to the students and the variables refer to student gender (male or female), age (derived the date of birth), exam points, attitude, deep, stra and surf.
 
 ```{r}
 
@@ -36,7 +37,9 @@ Two of the factors are integers (age and points), four numericals (attitude, dee
 summary(students2014)
 
 ```
-The summary shows the descriptive statistics of the numerics and integers, while showing the distribution of male and female in the gender variable
+The mean age of the students in the class is 25 years, with female students being almost twice more than the male students in the course.
+
+#plotting several barplots for visualization in scatter plot
 
 #### visualizing  student attitude aganist exam points
 ```{r}
@@ -67,42 +70,93 @@ p<- ggpairs(students2014, mapping = aes (col = gender, alpha = 0.3), lower = lis
 p
 
 ```
-
+From the scatter plot, across both gender the attitude of the student is highly correlated to the exam points attained. While there is higher likelihood of male students failing in deep learning compared to female students
 
 
 ### fit a regression model
-A regression model is divided into three parts and it follows the equation below
-$$Y \sim X\beta_0+X\beta_1 +\epsilon $$  
+Linear regression model is a statistical approach that is used for modelling relationships between a dependent variable **y** and one or more explanatory variables **X**. If there is only one explanatory variable then its called simple linear regression while in more than one variable it is refereed as multiple linear regression.  
+Linear model is divided into two parts namely systematic and stochastic parts. The model follows the equation below
+$$Y \sim \propto + X\beta_1+X\beta_2.....\beta_k +\epsilon $$  
 
 
-  * where **Y** is the target variable 
-  * $X\beta_0+X\beta_1$ is the systematic part of the model 
-  * $\beta$ quantifies the realtionship between **y* and **x**.
-  * $\epsilon$ describes the errors
+  * where **Y** is the target variable, we wish to predict the values of **y**       using the values of **X** 
+  * $\propto+X\beta_0+X\beta_1$ is the systematic part of the model 
+  * $\beta$ quantifies the relationship between **y** and **x**.
+  * $\epsilon$ describes the errors, which is assumed to be normally distributed.  
   
-The exaam point has been used as the target variables while surface learning, strategic learning and age have be used as dependent variables in the mode
+Using the student data set, the exam points has been used as the target variable while surface learning, strategic learning and attitude of the students have be used as dependent variables in the model
 
 ```{r}
-my_model<- lm(points~ surf+stra+age, data = students2014)
-
+my_model<- lm(points~ attitude+stra+age, data = students2014)
+summary(my_model)
 ```
 summary of the model
 ```{r}
-summary(my_model)
+
 
 ```
-comment and interpret the results.
-Explain and interpret the statistical test related to the model parameters
+
+The **call formula** captures the model fitted, e.g. in this case it is a multilinear regression with points as target variables while attitude, strategic learning and age are the independent variables.  
+
+### Residuals
+Residuals are the difference between the actual observed response value (exam points) and the response values that the model predicted.  
+The residual section is divided into 5 summary points, and it is used to assess how symmetrical distribution of the model acrosss the points on the mean value zero. From the analysis, we can see the distribution of the residual appear abit symmetrical.  
+### Coefficients  
+Coefficient gives unknown constants that represent the ~~intercept~~ and ~~unknown parameters~~ in terms of the model. 
+Estimate
+The coefficient Estimate contains four rows ; the first one is the intercept $\propto$ value, while the rest correspond to estimates of the unknown parameters $\beta_1+\beta_2 ....\beta_k$ in our multi linear regression model.
+~~Coefficient -Standard error~~  
+The coefficient Standard Error measures the average amount that the coefficient estimates vary from the actual average value of the response variable (exam points). Ideally, this value should be lower than its coefficient.
+~~Coefficient-t value~~
+The coefficient t-vale is a measure of how many standard deviations our coefficient estimate is far from 0. When the t-value is far from zero, this would indicate that we can reject the null hypothesis, that is, we declare there relationship between the dependent variables and the target variable exist.In our analysis, the t-statistic value of ~~attitude~~ is relatively far away from zero and is larger relative to the standard error, which would indicate a relationship exist, compared to variables ~~stra~~ and ~~age~~.
+~~Coefficient -Pr(<t)~~
+Commonly refered to as the p-value, a small p-vale indicates that it is unlikely to observe a relationship between the predictors and the target variable due to chance. Typically, a p-vale of 5% or less is a good cut -off point. In our model, the p-vales for ~~intercept~~ and ~~attitude~~ are more closer to zero compared to ~~stra~~ and ~~age~~.
+
+The "signif.Codes" are associated to each estimate, a three star (or asterisks) represent a highly significnat p-value. A small p value for the intercept and the attitude indicates that we can reject the null hypothesis allowing us to conclude that there is a relationship between ~~exam points~~ and student ~~attitude~~.
+
+
+stf error, t and p value corresponding to a statistical test of a null hypothesis that the coefficient estimate value of the beta parameter will be zero. but the p value is very low..concluding that there is some statisctial relationship between the explanatory variables and **y**
+
 
 using a summary of the fitted model, explain the relationship between the chosen explanatory variables and the target variable(interpret the model parameters). Explain and interpret the multiple R squared of the model
 
-###Diagnostic plots
-####Residual vs Fitted values
+model assumptions
+an obvious assumption is linearity.
+the target variable is modeled as a linear combination of the model paramters
+assumed that the errors are normally distributed
+
+
+
+### Diagnostic plots
+Three diagnostic plots were plotted from the model  
+
+1. Residual Vs Fitted  
+  This plot explores the validity of the model assumptions that are included in   the expression
+  $$
+  \epsilon \sim N(0,\sigma^2)
+  $$
+  * The errors are normally distributed
+  * The errors are not correlated
+  * The errors have constant variance $\sigma^2$  
+  * The size of a given error does not depend on the explanatory variables  
+  
+2. Normal Q-Q plot  
+   Explores the assumption that the errors of the model are normally distributed
+   Good--the the better the points falling aog the line the better is the fit to the assumption of normality
+   bad--deviation from the normal line makes the assumption of normality questionable
+3. Residual vs Leverage plot
+   Leverage measures how much impact a single observation has on the model.
+   Residual vs Leverage plot can be used to identify which observation have an unusual high impact
+
 ```{r}
-summary(my_model)
+par(mfrow= c(2,2))
+plot(my_model, which = c(1,2,5))
 
 ```
-Explain the assumption of the model and interpret the validity of those assumptions based on the diagnostic plots
+
+In the Normal Q-Q plot, most of the points were falling along the line, this strengthens the assumption of normality of the model
+
+The leverage plot shows presence of outliers which are not within the mean of X having higher leverage thereby pulling the regression line towards them
 
 ####Normal QQ-plot and Residuals vs Leverage
 ```{r}
