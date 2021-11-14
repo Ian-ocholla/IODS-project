@@ -7,7 +7,7 @@
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using.  
 
 ## Introduction to the data  
-In this work space, a student feedback data(more information [here](www.mv.helsinki.fi/home/knehkala/JYTmooc/JYTOPKYS3-meta.txt)) collected between 2014-2015 was used to asses the relationship between learning approaches and the students achievement in an introductory statistics course. This dataset will be used to develop a linear regression model and interpret the results.  
+In this work space, a student feedback data(more information [here](www.mv.helsinki.fi/home/knehkala/JYTmooc/JYTOPKYS3-meta.txt)) collected between 2014-2015 was used to asses the relationship between learning approaches and the students achievement in an introductory statistics course. The dataset underwent [data wrangling analysis](https://github.com/Ian-ocholla/R_source) and will be used to develop a linear regression model and interpret the results.  
 
 ### 1. Load the data into your Rworkspace from your work directory  
 
@@ -37,7 +37,7 @@ dim(students2014)
 
 
 ```
-The data contains 166 observations of 7 variables. The observations refers to the students and the variables refer to student gender (male or female), age (derived the date of birth), exam points, attitude, deep, stra and surf.
+The data contains 166 observations of 7 variables. The observations refers to the students and the variables refer to student gender (male or female), age (derived the date of birth), exam points, attitude, deep learning (deep), strategic learning (stra) and surface learning (surf).
 
 ```{r}
 
@@ -46,24 +46,22 @@ The data contains 166 observations of 7 variables. The observations refers to th
 ```
 
 
-#### Graphical overview and summaries of the variables in the data
+#### Summaries of the variables in the data
 ```{r}
 summary(students2014)
 
 ```
-The mean age of the students in the class is 25 years, with female students being almost twice more than the male students in the course.
+The mean age of the students in the class is 25 years, with the youngest being 17 years while the oldest at 55 years. The attitude variable was scaled to 1-5, with good attitude was rated at 5.  
+Female students were almost twice more than the male students in the course, with deep learning having the highest mean value among the three variables. The lowest exam point attained by the students was 7 with the overall class having an average of 22.  
 
 
-#### Visualizing  student attitude aganist exam points
+#### Graphical Visualizing of student attitude aganist exam points
 ```{r}
 library(ggplot2)
-
 #initialize plot with data and aesthetic mapping
 p1<- ggplot(students2014, aes( x= attitude, y= points, col = gender))
 #define the visualization type (points)
 p2<- p1 + geom_point()
-#draw the plot
-p2
 #add a regression line
 p3<- p2+geom_smooth(method = "lm")
 #add a main title and draw the plot
@@ -71,16 +69,14 @@ p4<- p3 + ggtitle("student's attitude versus exam points")
 p4
 ```
 
-Scatterplot matrix of the variables in the data
+From the plot above, we can deduce that majority of student across both gender had average attitude which coinciding with attaining average exam points. Female students with a negative attitude towards statistics managed to get higher exam points compared to male students with negative attitude.    
 
 ```{r}
-# exclude the gender variable from the matrix
-pairs(students2014[-1], col = students2014$gender)
+
 
 ```
 
-
-Create advanced plot matrix with ggpairs()
+#### An advanced plot matrix with ggpairs()
 ```{r}
 #Access the GGally and ggplot2 libraries
 library(GGally)
@@ -90,8 +86,6 @@ p<- ggpairs(students2014, mapping = aes (col = gender, alpha = 0.3), lower = lis
 p
 
 ```
-
-
 
 
 From the scatter plot, across both gender the attitude of the student is highly correlated to the exam points attained. While there is higher likelihood of male students failing in deep learning compared to female students
