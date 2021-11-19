@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 Purpose of the analysis is to study the relationships between high/low alcohol consumption and some of the other variables in the data
 
 The **joined data set** used in the analysis exercise combines the two student alcohol consumption dataset. The following adjustment have been made;  
@@ -207,4 +208,4 @@ cv$delta[1]
 
 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
