@@ -1,0 +1,210 @@
+
+Purpose of the analysis is to study the relationships between high/low alcohol consumption and some of the other variables in the data
+
+The **joined data set** used in the analysis exercise combines the two student alcohol consumption dataset. The following adjustment have been made;  
+
+* The variables not used for joining the two data have been combined by averaging (inlcuding the grade variables)  
+* 'alc_use
+ is the average of 'Dalc' and 'Walc'  
+* 'high_use' is true if 'alc_use' is higher than 2 and FALSE otherwise  
+
+### Read the joined student alcohol consumption data into R
+
+```{r}
+#set the work directory
+setwd("C:/LocalData/ocholla/IODS-project")
+#Load the data
+alc<- read.csv("Data/pormath.csv", header = TRUE, stringsAsFactors = TRUE)
+#print column names
+colnames(alc)
+#data structure
+str(alc)
+```
+## describe the data 
+This data approach student achievement in secondary education of two Portuguese schools. The data attributes include student grades, demographic, social and school related features) and it was collected by using school reports and questionnaires. Two datasets are provided regarding the performance in two distinct subjects: Mathematics (mat) and Portuguese language (por). In [Cortez and Silva, 2008], the two datasets were modeled under binary/five-level classification and regression tasks. Important note: the target attribute G3 has a strong correlation with attributes G2 and G1. This occurs because G3 is the final year grade (issued at the 3rd period), while G1 and G2 correspond to the 1st and 2nd period grades. It is more difficult to predict G3 without G2 and G1, but such prediction is much more useful (see paper source for more details).
+
+For more information [link](https://archive.ics.uci.edu/ml/datasets/Student+Performance)
+
+## choose 4 interesting variables in the data and for each of them , present your personal hypothesis about their relationship with alcohol consumption.
+ check if one of the chosen variables is a factor (refer to the link)
+
+```{r}
+
+```
+
+## Numerically and graphically explore the distribution of your chosen variables and their relationships with alcohol consumption (use crosstabulation, barplots and box plots). comment on your findings and compare the results of ypour previously stated hypotheses. 
+
+
+
+```{r}
+library(ggplot2)
+#Plot of alcohol use and gender
+g1<- ggplot(data= alc, aes(x = high_use, fill= sex))
+#define the plot as a bar plot and draw it
+g1+ geom_bar()+ ggtitle("Distribution by gender in alcohol consumption")
+```
+
+High number of men consume high use alcohol compared to women while high number
+of female students consumed low alcohol compared to male students
+get how to use the high_use in proper way rather than just using plain as it is
+
+```{r}
+#*summary statistcs by gender and final grades 
+library(dplyr)
+library(ggplot2)
+
+#produce summary statistics by group
+alc%>% group_by(sex,high_use)%>% summarise(count= n(), meangrade=mean(G3))
+```
+
+Female students (41/195) high_use of alcohol is TRUE and higher meangrade compared the F students with low consumption of alcohol
+However this does not hold true for male students as (70/105) recorded low mean grades compared tho the low alcohol.
+In general, M student with low alcohol consumption had highest mean grade
+
+
+**failures**
+```{r}
+#*failures
+alc%>% group_by(sex, high_use)%>% summarise(count= n(), average_times=mean(failures))
+```
+
+
+**Does high use of alcohol have a connection to school absence?**
+```{r}
+#initialise a plot of high_use and G3
+a1<- ggplot(alc, aes(x= high_use, y= G3, col= sex))
+#define the plot as a boxplot and draw it
+g1+ geom_boxplot() + ylab("grade")
+#initialise a plot of hih_use and absences
+a2<- ggplot(alc, aes(x= high_use, y = absences, col= sex))
+#define the plot as a boxplot and draw it
+a2 + geom_boxplot()+ggtitle("Student absence by alcohol consumption and sex")
+
+
+```
+
+
+use logistic regression to statistically explore the relationship between your chosen variables and the binary high/low alcohol consumption variable as the target variable. present and interpret a summey of the fitted model.
+present and interprest the coefficient of the model as odds ratios and provide confidence intervals for them. interpret the results and compare them to your stated hypothesis
+
+Odd ratio: The ratio of expected "successes" to failures are called the odds
+Higher odds corresponds to a higher probability of success, with the value ranging from zero to infinity the ratio of two odds is called the odd ratio or the ratio of successes to failures. Odds higher than 1 mean that X is positively associated with "success"
+
+```{r}
+#find the model with glm()
+m<- glm(high_use~failures+absences+sex, data = alc, family = "binomial")
+#print out a summary of the model
+summary(m)
+#Print out the coefficients of the model
+coef(m)
+#compute odds ratios (OR)
+OR<- coef(m)%>% exp
+#compute confidence intervals (CI)
+CI<- confint(m)%>% exp
+#Print out te odds ratios with their CI
+cbind(OR,CI)
+
+```
+
+
+using the variables which according to your logistic regression model had a statistical relationship with high/low alcohol consumption, explore the predictive power of your model. provide a 2x2 cross tabulation of predictors versus the actual values and optionally display agraphci visualizing both the actual values and the predictors. compute the total proportion of inaccurately classified individuals (= the training error) and coment on all the results. compare the performance of the model with performance achieved by some simple guessing strategy
+
+```{r}
+#predict() the probability of high_use
+#predict() the probability of high_use
+probabilities <- predict(m, type = "response")
+#add the predicted probabilities to alc
+alc<- mutate(alc, probability= probabilities)
+#use the probabilities to make a prediction of high_use
+alc<- mutate(alc, prediction= probability>0.5)
+#*see the first ten original classes, predicted probabilities, 
+#*and class predictions
+#*
+select(alc, failures,absences, sex, high_use,probability, prediction)%>% head(10)
+#tabulate the atrget variable versus the predictions 
+#Generating the confusion matrix
+table(high_use=alc$high_use, prediction=alc$prediction)
+
+#continue to explore the data
+library(dplyr)
+library(ggplot2)
+
+#initialize a plot of 'high_use' versus 'probability' in alc
+g<- ggplot(alc, aes(x = probability, y= high_use, col = prediction))
+#define the geom as points and drw the plot
+g+geom_point()
+#tabulate the target variable vesus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table%>% addmargins
+#what is the function of prop.table(), addmargins function, general use of table in confusion matrix in logistic regression
+
+
+
+```
+
+**Bonus**: Perform 10 fold cross validation on your model. Does your model have better test set performance (smaller prediction error using 10 fold cross validation) compared to the model introduced in DataCamp (which has baout 0.26 error). Could you find such a model?
+
+### cross validation
+This is a method of testing a predictive model on unseen data
+split the data into training and testing data, 
+whereby the training data is used to find the model 
+while the test data is used to make prediction and evaluate the model performance
+
+**Accuracy and error**
+calculate the proportion of correctly classifed objects
+
+one round of cross validation involves  
+
+1. partitioning a sample of data into complementary subsets  
+2. Performing the analysis on one subset (the training set, larger)  
+3. validating the analysis on the other subset (the testing set, smaller)  
+
+This process is repeated so that eventually all of the data is used for both
+training and testing
+
+In CV, the value of a penalty(loss) function (mean prediction error) is computed on data not used for finding the model. Low value= good.
+
+Cross validation gives a good estmate of the actual predictive power of the model
+It can also be sued to compare different models or classification methods.
+
+
+```{r}
+#define a lss function (average prediction error)
+#define a loss function (mean prediction error)
+
+loss_func<- function(class, prob){
+  n_wrong<-abs(class - prob)> 0.5
+  mean(n_wrong)
+}
+#call loss_func to compute the average number of wrong predictions in the training data
+loss_func(class = alc$high_use, prob = alc$probability) #average number of wrong predictions
+
+```
+
+
+```{r}
+#define a lss function (average prediction error)
+
+loss_func<- function(class, prob){
+  n_wrong<-abs(class - prob)>0.5
+  mean(n_wrong)
+}
+
+#compute the average number of wrong predictions in the (training) data
+loss_func(class= alc$high_use, prob = alc$probability)
+#K fold cross validation
+library(boot)
+cv<- cv.glm(data= alc, cost= loss_func, glmfit= m, K=10)
+#average number of wrong predictions in the cross validation
+cv$delta[1]
+```
+
+
+**super bonus** Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the chnages in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends pf both training and testing errors by the number of predictrors in the model
+
+```{r}
+
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
