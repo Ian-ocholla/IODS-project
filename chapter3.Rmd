@@ -1,8 +1,7 @@
 # LOGISTIC REGRESSION ANALYSIS
 
-##This exercise focuses on exploring the data and performing and interpreting logistic regression analysis
 
-In this exercise, we explore the use of logistic regression analysis on student achievement data in secondary education in two Portuguese schools. The data attribute include the student grades, demographic, social and school related features. The data was collected by using school reports and questionnaires. 
+In this exercise, we explore the use of **logistic regression analysis** on student achievement data in secondary education in two Portuguese schools. The data attribute include the student grades, demographic, social and school related features. The data was collected by using school reports and questionnaires. More information can be found in the [link](https://archive.ics.uci.edu/ml/datasets/Student+Performance)
 
 Purpose of the analysis is to study the relationships between high/low alcohol consumption and students attributes. The _joined dataset_ used in the analysis exercise combines the two student alcohol consumption data sets. The following adjustment have been made;  
 
@@ -18,13 +17,13 @@ setwd("C:/LocalData/ocholla/IODS-project")
 alc<- read.csv("Data/pormath.csv", header = TRUE, stringsAsFactors = TRUE)
 #print column names
 colnames(alc)
-#data structure
+#structure of the data
 str(alc)
 ```
 
 The dataset contains 370 observation of 51 variables, the variables are a mixture of integers, factors and logical data types
 
-### 2. Choose 4 interesting variables in the data and for each of them , present your personal hypothesis about their relationship with alcohol consumption.
+### 2. Analysis of student variables relationship with alcohol consumption.
 
 Hypothesis on the four variables  
 
@@ -33,27 +32,22 @@ Hypothesis on the four variables
 3. famrel- Good quality family relationship reduces alcohol abuse.
 4. goout- students who have a high tendency of going out with friends are prone to peer pressure which can easily lead to high alcohol consumption
 
- check if one of the chosen variables is a factor (refer to the link)
 
-```{r}
+Numerically and graphically explore the distribution of your chosen variables and their relationships with alcohol consumption (use crosstabulation, barplots and box plots). comment on your findings and compare the results of ypour previously stated hypotheses. 
 
-```
-
-## Numerically and graphically explore the distribution of your chosen variables and their relationships with alcohol consumption (use crosstabulation, barplots and box plots). comment on your findings and compare the results of ypour previously stated hypotheses. 
-
-
+**Distribution of alcohol consumption by gender**
 ```{r}
 library(ggplot2)
 g1<- ggplot(data= alc, aes(x = high_use, fill= sex))
 #define the plot as a bar plot and draw it
-g1+ geom_bar()+ ggtitle("Distribution by parents cohabitation status in alcohol consumption")
+g1+ geom_bar()+ ggtitle("Alcohol consumption across students by gender")
 ```
 
-Students from househilds where parents are living together indulge in high alcohol
-consumption compared to households with parents living separately
+High proportion of male students indulge in high alcohol consumption compared to female students, whereas, more female student population consume low alcohol in comparison to the male student with low alcohol intake.
 
+**Relationship between sex, quality family relationships and use of alcohol**
 ```{r}
-#*summary statistics by address and final grades 
+#*summary statistics by sex and quality family relationships 
 library(dplyr)
 library(ggplot2)
 
@@ -61,52 +55,54 @@ library(ggplot2)
 alc%>% group_by(sex, high_use)%>% summarise(count= n(), familytime=mean(famrel))
 ```
 
-Approximately 10% more of students based in rural address has high use of alcohol compared 
-to the urban address students. In the two addresses, the rural students with high alcohol 
-consumption had higher mean grade compared to those with low alcohol consumption. 
-This is vice verse in the urban areas where the students with low alcohol consumption recorded the highest mean grade
+Four-fifth of all the female students have low alcohol consumption and they have higher mean in the quality of family relationship compared to female students who had high alcohol consumption. Similarly,  male students with high family relationship  had low alcohol consumption.  
 
 
-
-**failures**
+**Relationship between sex and incidences of going out with alcohol consumption among the students** 
 ```{r}
 #*failures
 alc%>% group_by(sex, high_use)%>% summarise(count= n(), going_out=mean(goout))
 
 ```
 
-In both parent cohabitation status, students with high use of alcohol had higher average failure times. 
-The failure average of students with parents living togther had the highest average failure times
+In both genders, higher incidences of going out are associated with high consumption of alcohol
 
-**Does high use of alcohol have a connection to school absence?**
+**Does high use of alcohol have a connection to study time?**
 ```{r}
 #does high use of alcohol have a connection to romantic relationship?
-
 a2<- ggplot(alc, aes(x= high_use, y = studytime, col= sex))
 #define the plot as a boxplot and draw it
 a2 + geom_boxplot()+ylab("Hours")+ggtitle("Student study hours by alcohol consumption and sex")
-
 ```
 
-## Fitting a model
-present and interpret a summey of the fitted model.
-present and interprest the coefficient of the model as odds ratios and provide confidence intervals for them. interpret the results and compare them to your stated hypothesis
+Among students with low alcohol consumption, the female students spent between 5 to 10 hours in their studies compared to male students who spent between 3-5 hours.
 
-Odd ratio: The ratio of expected "successes" to failures are called the odds
-Higher odds corresponds to a higher probability of success, with the value ranging from zero to infinity the ratio of two odds is called the odd ratio or the ratio of successes to failures. Odds higher than 1 mean that X is positively associated with "success"
+On the contrary, female students with high alcohol consumption spent exactly  5 hours for their studies while the make students spent 2 to 5 hours.
+
+## 3. Fitting a logistics model
 
 ```{r}
 #find the model with glm()
 m<- glm(high_use~sex+studytime+famrel+goout, data = alc, family = "binomial")
 #print out a summary of the model
 summary(m)
-
-
 ```
 
+From the model, the p-vales for the four variables are statistically significant.
+The output supports the hypothesis that gender, study time, going out and quality family relationship affects the student's alcohol consumption. 
+
+**model coefficients**
 ```{r}
 #Print out the coefficients of the model
 coef(m)
+```
+
+Based on the regression coefficients, the odds of high use of alcohol increased with students being male and those with a high frequency of going out, while it decreased with in students who allocate more study time and have excellent family relationships. 
+**Odd ratio** 
+Odd ratio is  the ratio of expected "successes" to failures.Higher odds corresponds to a higher probability of success, with the value ranging from zero to infinity.
+
+Transform the coefficients to odds ratios and transform it by exponentiation it to return it as a unit change in the predictor variable (*high_use*), holding all other predictor variables constant
+```{r}
 #compute odds ratios (OR)
 OR<- coef(m)%>% exp
 #compute confidence intervals (CI)
@@ -115,105 +111,104 @@ CI<- confint(m)%>% exp
 cbind(OR,CI)
 ```
 
+With a confidence interval of 95%, the likelihood of high use of alcohol increased by  a factor of 2.21 and 2.19 when the student is of male gender and has high tendency of going going respectively. This means by that  On the contrary, the odds of high use of alcohol among students who allocate more study time and have good family relationships drops by -38.21% and -34.25%. Meaning in every one hour added in study time chances of high alcohol reduces by 38.21% while improvement of the family relationship reduces high use of alcohol by 34.25%.
 
-using the variables which according to your logistic regression model had a statistical relationship with high/low alcohol consumption, explore the predictive power of your model. provide a 2x2 cross tabulation of predictors versus the actual values and optionally display graphic visualizing both the actual values and the predictors. compute the total proportion of inaccurately classified individuals (= the training error) and coment on all the results. compare the performance of the model with performance achieved by some simple guessing strategy
+**Predictive power of the model**
+Exploring the predictive power of the logistic model, through a 2x2 cross tabulation of predictors versus the actual values. 
 
 ```{r}
-#predict() the probability of high_use
 #predict() the probability of high_use
 probabilities <- predict(m, type = "response")
 #add the predicted probabilities to alc
 alc<- mutate(alc, probability= probabilities)
 #use the probabilities to make a prediction of high_use
 alc<- mutate(alc, prediction= probability>0.5)
-#*see the first ten original classes, predicted probabilities, 
-#*and class predictions
-#*
-select(alc, goout, famrel,studytime, sex, high_use,probability, prediction)%>% head(10)
-#tabulate the target variable versus the predictions 
-#Generating the confusion matrix
-table(high_use=alc$high_use, prediction=alc$prediction)
-
-#continue to explore the data
-library(dplyr)
-library(ggplot2)
-
-#initialize a plot of 'high_use' versus 'probability' in alc
-g<- ggplot(alc, aes(x = probability, y= high_use, col = prediction))
-#define the geom as points and drw the plot
-g+geom_point()
-#tabulate the target variable vesus the predictions
-table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table%>% addmargins
-#what is the function of prop.table(), addmargins function, general use of table in confusion matrix in logistic regression
-
-
+#*see the first five original classes, predicted probabilities, 
+select(alc, goout, famrel,studytime, sex, high_use,probability, prediction)%>% head(5)
 
 ```
 
-**Bonus**: Perform 10 fold cross validation on your model. Does your model have better test set performance (smaller prediction error using 10 fold cross validation) compared to the model introduced in DataCamp (which has baout 0.26 error). Could you find such a model?
+The chances of high alcohol consumption declines when the student is female
 
-### cross validation
+**Confusion matrix (2x2) table**
+```{r}
+#tabulate the target variable versus the predictions 
+
+table(high_use=alc$high_use, prediction=alc$prediction)
+```
+From the, 230 low alcohol consumption was corrected while 29 were incorrectly predicted. on the other hand, 52 observation of high alcohol consumption were correctly predicted while 59 were wrongly predicted.
+
+plotting the original *high_use* versus the predicted in alc
+```{r}
+#initialize a plot of 'high_use' versus 'probability' in alc
+g<- ggplot(alc, aes(x = probability, y= high_use, col = prediction))
+#define the geom as points and draw the plot
+g+geom_point()
+
+```
+
+**Accuracy assessment through the confusion matrix**
+```{r}
+#tabulate the target variable versus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table%>% addmargins
+#what is the function of prop.table(), addmargins function, general use of table in confusion matrix in logistic regression
+```
+
+
+compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. compare the performance of the model with performance achieved by some simple guessing strategy
+
+
+### 4. Cross validation
 This is a method of testing a predictive model on unseen data
 split the data into training and testing data, 
 whereby the training data is used to find the model 
 while the test data is used to make prediction and evaluate the model performance
 
-**Accuracy and error**
-calculate the proportion of correctly classifed objects
-
-one round of cross validation involves  
+One round of cross validation involves  
 
 1. partitioning a sample of data into complementary subsets  
 2. Performing the analysis on one subset (the training set, larger)  
 3. validating the analysis on the other subset (the testing set, smaller)  
 
 This process is repeated so that eventually all of the data is used for both
-training and testing
-
-In CV, the value of a penalty(loss) function (mean prediction error) is computed on data not used for finding the model. Low value= good.
-
-Cross validation gives a good estmate of the actual predictive power of the model
-It can also be sued to compare different models or classification methods.
-
+training and testing.In CV, the value of a penalty(loss) function (mean prediction error) is computed on data not used for finding the model. A low CV value is an indication of a good model.
 
 ```{r}
-#define a lss function (average prediction error)
-#define a loss function (mean prediction error)
-
+#define a loss function (average prediction error)
 loss_func<- function(class, prob){
   n_wrong<-abs(class - prob)> 0.5
   mean(n_wrong)
 }
 #call loss_func to compute the average number of wrong predictions in the training data
 loss_func(class = alc$high_use, prob = alc$probability) #average number of wrong predictions
-
 ```
 
-
+**Cross validation using 10 K-folds**
 ```{r}
-#define a lss function (average prediction error)
-
+library(boot)
+#define a loss function (average prediction error)
 loss_func<- function(class, prob){
-  n_wrong<-abs(class - prob)>0.5
+  n_wrong<-abs(class - prob)> 0.5
   mean(n_wrong)
 }
-
-#compute the average number of wrong predictions in the (training) data
-loss_func(class= alc$high_use, prob = alc$probability)
-#K fold cross validation
-library(boot)
+#average number of wrong prediction
+loss_func(class = alc$high_use, prob = alc$probability) 
 cv<- cv.glm(data= alc, cost= loss_func, glmfit= m, K=10)
 #average number of wrong predictions in the cross validation
 cv$delta[1]
 ```
 
+The model had a CV of 0.23 which is much better than that in the DataCamp.
 
-**super bonus** Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the changes in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends pf both training and testing errors by the number of predictors in the model
+**super bonus** 
+Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the changes in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends of both training and testing errors by the number of predictors in the model
 
 ```{r}
 
 ```
 
 
+```{r}
 
+```
 
