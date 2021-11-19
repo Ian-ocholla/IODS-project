@@ -16,7 +16,7 @@ The first step to creating a work directory where we have stored our data
 ```{r}
 
 #set the working directory of your R session the IODS project folder
-setwd("Z:/Courses/Open data science/R/IODS-project")
+setwd("C:/LocalData/ocholla/IODS-project")
 
 ```
 
