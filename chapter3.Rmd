@@ -32,9 +32,6 @@ Hypothesis on the four variables
 3. famrel- Good quality family relationship reduces alcohol abuse.
 4. goout- students who have a high tendency of going out with friends are prone to peer pressure which can easily lead to high alcohol consumption
 
-
-Numerically and graphically explore the distribution of your chosen variables and their relationships with alcohol consumption (use crosstabulation, barplots and box plots). comment on your findings and compare the results of ypour previously stated hypotheses. 
-
 **Distribution of alcohol consumption by gender**
 ```{r}
 library(ggplot2)
@@ -88,10 +85,11 @@ m<- glm(high_use~sex+studytime+famrel+goout, data = alc, family = "binomial")
 summary(m)
 ```
 
-From the model, the p-vales for the four variables are statistically significant.
-The output supports the hypothesis that gender, study time, going out and quality family relationship affects the student's alcohol consumption. 
+From the model, the p-values for the four variables are statistically significant.
+The output supports the hypothesis that gender, study time, going out and quality family relationship affects the student's alcohol consumption. The positive estimate value on the factor variable sex indicates likelihood of high use of alcohol among male students with reference to the female students
 
-**model coefficients**
+
+**Model coefficients**
 ```{r}
 #Print out the coefficients of the model
 coef(m)
@@ -136,7 +134,7 @@ The chances of high alcohol consumption declines when the student is female
 
 table(high_use=alc$high_use, prediction=alc$prediction)
 ```
-From the, 230 low alcohol consumption was corrected while 29 were incorrectly predicted. on the other hand, 52 observation of high alcohol consumption were correctly predicted while 59 were wrongly predicted.
+From the table, 230 low alcohol consumption was corrected while 29 were incorrectly predicted. on the other hand, 52 observation of high alcohol consumption were correctly predicted while 59 were wrongly predicted.
 
 plotting the original *high_use* versus the predicted in alc
 ```{r}
@@ -151,12 +149,10 @@ g+geom_point()
 ```{r}
 #tabulate the target variable versus the predictions
 table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table%>% addmargins
-#what is the function of prop.table(), addmargins function, general use of table in confusion matrix in logistic regression
 ```
 
-
-compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. compare the performance of the model with performance achieved by some simple guessing strategy
-
+Approximately 19% and 36%  were inaccurately predicted for the false and true values respectively by the model.  
+From the confusion matrix table, the accuracy of the prediction can be calculated through addition of True Negative and Positive (0.62 and 0.14) divided by the summation of both true and false values in both the original set (high_use) and prediction. we get that the prediction accuracy is 0.76, this is a high performance from the model compared to simple guessing strategies.    
 
 ### 4. Cross validation
 This is a method of testing a predictive model on unseen data
@@ -174,13 +170,7 @@ This process is repeated so that eventually all of the data is used for both
 training and testing.In CV, the value of a penalty(loss) function (mean prediction error) is computed on data not used for finding the model. A low CV value is an indication of a good model.
 
 ```{r}
-#define a loss function (average prediction error)
-loss_func<- function(class, prob){
-  n_wrong<-abs(class - prob)> 0.5
-  mean(n_wrong)
-}
-#call loss_func to compute the average number of wrong predictions in the training data
-loss_func(class = alc$high_use, prob = alc$probability) #average number of wrong predictions
+
 ```
 
 **Cross validation using 10 K-folds**
@@ -204,11 +194,14 @@ The model had a CV of 0.23 which is much better than that in the DataCamp.
 Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the changes in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends of both training and testing errors by the number of predictors in the model
 
 ```{r}
-
+#find the model with glm()
+summary(m0<- glm(high_use~G3+absences+traveltime+reason+famsize+sex+studytime+famrel+goout, data = alc, family = "binomial"))
+summary(m1<- glm(high_use~absences+traveltime+reason+sex+studytime+famrel+goout, data = alc, family = "binomial"))
+summary(m2<- glm(high_use~absences+traveltime+sex+studytime+famrel+goout, data = alc, family = "binomial"))
 ```
 
 
 ```{r}
-
+date()
 ```
 

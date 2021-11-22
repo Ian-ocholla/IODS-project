@@ -210,7 +210,7 @@ pre code {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Fri Nov 19 17:47:26 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 22 07:19:58 2021&quot;</code></pre>
 <p>The text continues here.</p>
 <hr />
 </div>
@@ -380,7 +380,7 @@ plot(my_model, which = c(1,2,5))</code></pre>
 <p>In the <strong>Normal Q-Q plot</strong>, most of the residual points are falling along the diagonal line, with little deviation at both ends.Since there is minimal deviation of the residuals from the line, the QQ plot strengthens the assumption of normality of the model</p>
 <p>In the <strong>leverage plot</strong> there are no influential cases as we can see the Cook’s distance as all the cases are well inside of the Cook’s distance lines.</p>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Fri Nov 19 17:47:34 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 22 07:20:08 2021&quot;</code></pre>
 <p>References<br />
 1. <a href="https://rmd4sci.njtierney.com">Rmarkdown for Scientist</a><br />
 2. <a href="https://data.library.virginia.edu/diagnostic-plots/">University of Virginia Library</a></p>
@@ -481,7 +481,6 @@ str(alc)</code></pre>
 <li>famrel- Good quality family relationship reduces alcohol abuse.</li>
 <li>goout- students who have a high tendency of going out with friends are prone to peer pressure which can easily lead to high alcohol consumption</li>
 </ol>
-<p>Numerically and graphically explore the distribution of your chosen variables and their relationships with alcohol consumption (use crosstabulation, barplots and box plots). comment on your findings and compare the results of ypour previously stated hypotheses.</p>
 <p><strong>Distribution of alcohol consumption by gender</strong></p>
 <pre class="r"><code>library(ggplot2)
 g1&lt;- ggplot(data= alc, aes(x = high_use, fill= sex))
@@ -568,8 +567,8 @@ summary(m)</code></pre>
 ## AIC: 380.69
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>From the model, the p-vales for the four variables are statistically significant. The output supports the hypothesis that gender, study time, going out and quality family relationship affects the student’s alcohol consumption.</p>
-<p><strong>model coefficients</strong></p>
+<p>From the model, the p-values for the four variables are statistically significant. The output supports the hypothesis that gender, study time, going out and quality family relationship affects the student’s alcohol consumption. The positive estimate value on the factor variable sex indicates likelihood of high use of alcohol among male students with reference to the female students</p>
+<p><strong>Model coefficients</strong></p>
 <pre class="r"><code>#Print out the coefficients of the model
 coef(m)</code></pre>
 <pre><code>## (Intercept)        sexM   studytime      famrel       goout 
@@ -614,7 +613,7 @@ table(high_use=alc$high_use, prediction=alc$prediction)</code></pre>
 ## high_use FALSE TRUE
 ##    FALSE   230   29
 ##    TRUE     59   52</code></pre>
-<p>From the, 230 low alcohol consumption was corrected while 29 were incorrectly predicted. on the other hand, 52 observation of high alcohol consumption were correctly predicted while 59 were wrongly predicted.</p>
+<p>From the table, 230 low alcohol consumption was corrected while 29 were incorrectly predicted. on the other hand, 52 observation of high alcohol consumption were correctly predicted while 59 were wrongly predicted.</p>
 <p>plotting the original <em>high_use</em> versus the predicted in alc</p>
 <pre class="r"><code>#initialize a plot of &#39;high_use&#39; versus &#39;probability&#39; in alc
 g&lt;- ggplot(alc, aes(x = probability, y= high_use, col = prediction))
@@ -629,8 +628,8 @@ table(high_use = alc$high_use, prediction = alc$prediction)%&gt;% prop.table%&gt
 ##    FALSE 0.62162162 0.07837838 0.70000000
 ##    TRUE  0.15945946 0.14054054 0.30000000
 ##    Sum   0.78108108 0.21891892 1.00000000</code></pre>
-<pre class="r"><code>#what is the function of prop.table(), addmargins function, general use of table in confusion matrix in logistic regression</code></pre>
-<p>compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. compare the performance of the model with performance achieved by some simple guessing strategy</p>
+<p>Approximately 19% and 36% were inaccurately predicted for the false and true values respectively by the model.<br />
+From the confusion matrix table, the accuracy of the prediction can be calculated through addition of True Negative and Positive (0.62 and 0.14) divided by the summation of both true and false values in both the original set (high_use) and prediction. we get that the prediction accuracy is 0.76, this is a high performance from the model compared to simple guessing strategies.</p>
 <div id="cross-validation" class="section level3">
 <h3>4. Cross validation</h3>
 <p>This is a method of testing a predictive model on unseen data split the data into training and testing data, whereby the training data is used to find the model while the test data is used to make prediction and evaluate the model performance</p>
@@ -643,14 +642,6 @@ table(high_use = alc$high_use, prediction = alc$prediction)%&gt;% prop.table%&gt
 <li>validating the analysis on the other subset (the testing set, smaller)</li>
 </ol>
 <p>This process is repeated so that eventually all of the data is used for both training and testing.In CV, the value of a penalty(loss) function (mean prediction error) is computed on data not used for finding the model. A low CV value is an indication of a good model.</p>
-<pre class="r"><code>#define a loss function (average prediction error)
-loss_func&lt;- function(class, prob){
-  n_wrong&lt;-abs(class - prob)&gt; 0.5
-  mean(n_wrong)
-}
-#call loss_func to compute the average number of wrong predictions in the training data
-loss_func(class = alc$high_use, prob = alc$probability) #average number of wrong predictions</code></pre>
-<pre><code>## [1] 0.2378378</code></pre>
 <p><strong>Cross validation using 10 K-folds</strong></p>
 <pre class="r"><code>library(boot)
 #define a loss function (average prediction error)
@@ -664,9 +655,109 @@ loss_func(class = alc$high_use, prob = alc$probability) </code></pre>
 <pre class="r"><code>cv&lt;- cv.glm(data= alc, cost= loss_func, glmfit= m, K=10)
 #average number of wrong predictions in the cross validation
 cv$delta[1]</code></pre>
-<pre><code>## [1] 0.2432432</code></pre>
+<pre><code>## [1] 0.2540541</code></pre>
 <p>The model had a CV of 0.23 which is much better than that in the DataCamp.</p>
 <p><strong>super bonus</strong> Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the changes in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends of both training and testing errors by the number of predictors in the model</p>
+<pre class="r"><code>#find the model with glm()
+summary(m0&lt;- glm(high_use~G3+absences+traveltime+reason+famsize+sex+studytime+famrel+goout, data = alc, family = &quot;binomial&quot;))</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = high_use ~ G3 + absences + traveltime + reason + 
+##     famsize + sex + studytime + famrel + goout, family = &quot;binomial&quot;, 
+##     data = alc)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.8894  -0.7459  -0.4418   0.6426   2.7811  
+## 
+## Coefficients:
+##                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)      -2.66560    1.00389  -2.655  0.00792 ** 
+## G3               -0.01447    0.04251  -0.340  0.73350    
+## absences          0.07678    0.02339   3.282  0.00103 ** 
+## traveltime        0.40320    0.19364   2.082  0.03732 *  
+## reasonhome        0.34770    0.34200   1.017  0.30930    
+## reasonother       1.11530    0.46975   2.374  0.01759 *  
+## reasonreputation -0.16462    0.36307  -0.453  0.65025    
+## famsizeLE3        0.23888    0.29336   0.814  0.41549    
+## sexM              0.87539    0.28243   3.100  0.00194 ** 
+## studytime        -0.30531    0.18219  -1.676  0.09379 .  
+## famrel           -0.42737    0.14738  -2.900  0.00373 ** 
+## goout             0.78725    0.13037   6.039 1.55e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 452.04  on 369  degrees of freedom
+## Residual deviance: 346.82  on 358  degrees of freedom
+## AIC: 370.82
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>summary(m1&lt;- glm(high_use~absences+traveltime+reason+sex+studytime+famrel+goout, data = alc, family = &quot;binomial&quot;))</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = high_use ~ absences + traveltime + reason + sex + 
+##     studytime + famrel + goout, family = &quot;binomial&quot;, data = alc)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.9077  -0.7427  -0.4506   0.6514   2.7420  
+## 
+## Coefficients:
+##                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)      -2.74054    0.85222  -3.216 0.001301 ** 
+## absences          0.07805    0.02326   3.356 0.000791 ***
+## traveltime        0.41779    0.19046   2.194 0.028263 *  
+## reasonhome        0.32961    0.34063   0.968 0.333226    
+## reasonother       1.09017    0.46850   2.327 0.019970 *  
+## reasonreputation -0.18187    0.36148  -0.503 0.614869    
+## sexM              0.89451    0.28156   3.177 0.001488 ** 
+## studytime        -0.32030    0.18031  -1.776 0.075671 .  
+## famrel           -0.43481    0.14668  -2.964 0.003033 ** 
+## goout             0.79177    0.12892   6.142 8.16e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 452.04  on 369  degrees of freedom
+## Residual deviance: 347.54  on 360  degrees of freedom
+## AIC: 367.54
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>summary(m2&lt;- glm(high_use~absences+traveltime+sex+studytime+famrel+goout, data = alc, family = &quot;binomial&quot;))</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = high_use ~ absences + traveltime + sex + studytime + 
+##     famrel + goout, family = &quot;binomial&quot;, data = alc)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.7951  -0.7373  -0.4716   0.6918   2.5876  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.35248    0.80844  -2.910  0.00362 ** 
+## absences     0.07725    0.02257   3.423  0.00062 ***
+## traveltime   0.37496    0.18585   2.018  0.04364 *  
+## sexM         0.89229    0.27716   3.219  0.00128 ** 
+## studytime   -0.38722    0.17561  -2.205  0.02745 *  
+## famrel      -0.41690    0.14401  -2.895  0.00379 ** 
+## goout        0.76216    0.12560   6.068 1.29e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 452.04  on 369  degrees of freedom
+## Residual deviance: 355.05  on 363  degrees of freedom
+## AIC: 369.05
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>date()</code></pre>
+<pre><code>## [1] &quot;Mon Nov 22 07:20:10 2021&quot;</code></pre>
+<hr />
 <p>(more chapters to be added similarly as we proceed with the course!)</p>
 </div>
 </div>
