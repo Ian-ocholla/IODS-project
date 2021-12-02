@@ -1,1 +1,203 @@
 
+```{r}
+
+#set the workdirectory
+setwd("C:/LocalData/ocholla/IODS-project/Data")
+library(dplyr)
+library(corrplot)
+library(ggplot2)
+#Load the human data 
+human<- read.csv("human.csv", header = TRUE)
+```
+
+```{r}
+str(human)
+summary(human)
+```
+
+
+```{r}
+#plot matrix of the variables
+pairs(human)
+
+```
+
+
+```{r}
+#create a correlation matrix to show the correlation 
+#between variables in the data
+cor_matrix<- cor(human) %>% round(digits = 2)
+#print the correlation matrix
+cor_matrix
+
+```
+
+
+```{r}
+#visualize the correlation matrix
+corrplot(cor_matrix, method="circle",type= "upper",
+         cl.pos="b", tl.pos="d",tl.cex=0.6)
+
+```
+#*in the data. Describe and interpret the outputs, commenting on the distributions
+#*of the variables and the relationships between them
+
+
+
+```{r}
+#*Perform PCA on the not standardized human data. 
+pca_human<- prcomp(human)
+#print summary of the pca_human
+s<-summary(pca_human)
+s
+
+```
+#*show the variability captured by the principal component
+
+```{r}
+#round the percentage of variance captured by each PC
+pca_pr<-round(100*s$importance[2,],
+              digits = 1)
+#print out the percentages of variance
+pca_pr
+
+
+```
+
+
+
+#*draw a bipot displaying the observation by the first two principal components (
+#*PC1 coordinate in x-axis, PC2 coordinate in y-axis),
+#* along with arrows representing the original variables
+```{r}
+#create object pc_lab to be used as axis labels
+pc_lab<- paste0(names(pca_pr), "(",pca_pr,"%)")
+
+biplot(pca_human, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2"),
+       xlab=pc_lab[1],ylab= pc_lab[2])
+
+
+```
+#Maternal Mortality is the most influential variable in PC1, whereas in PC2 its GNI
+
+#*standardize the variables in the human data and repeat the above analysis
+```{r}
+human_std<- scale(human)
+#check the summaries of the standardized variables
+summary(human_std)
+
+```
+
+#perform principal component analysis (with SVD method)
+```{r}
+
+pca_human_std<-prcomp(human_std)
+#print summary of the pca_human
+s1<-summary(pca_human_std)
+s1
+
+```
+
+#*show the variability captured by the principal component
+```{r}
+#round the percentage of variance captured by each PC
+pca_pr1<-round(100*s1$importance[2,],
+              digits = 1)
+#print out the percentages of variance
+pca_pr1
+
+```
+
+
+#draw biplot of the principal component representation and the original variables
+```{r}
+#create object pc_lab to be used as axis labels
+pc_lab1<- paste0(names(pca_pr1), "(",pca_pr1,"%)")
+
+#draw biplot of the principal component representation and the original variables
+biplot(pca_human_std, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2"),
+       xlab=pc_lab1[1],ylab= pc_lab1[2])
+
+```
+#*Interpret the results of both analysis (with and without standardizing). 
+#*Are the results different?why or why not? 
+#*Include captions (brief description) in your plots where you describe the 
+#*results by using not just your variable names but the actual phenomenon they relate to
+
+
+
+#*Give your personal interpretation of the first two principal
+#* component dimensions based on the biplot drawn after 
+#* PCA on th standardized human data
+
+
+### MCA
+```{r}
+#*Load the tea dataset from the package Factominer
+library(FactoMineR)
+library(ggplot2)
+library(tidyr)
+data("tea")
+
+```
+#* 300 tea consumers have answered a survey about their consumption of tea.
+#* the questions were about how they consume tea, how they think of tea 
+#* and descriptive questions(sex, age, socio-professional 
+#* category and sport practise).
+#* Except of the age, all variables are categorical.
+
+```{r}
+#*Look at the structure and dimensions of the data 
+str(tea)
+dim(tea)
+
+```
+
+
+```{r}
+#columns to kep in the dataset
+keep_columns<- c("Tea","How","how","sugar","where","lunch")
+#select the keep_columns to create a new dataset
+tea_time<- dplyr::select(tea, one_of(keep_columns))
+#look at the summaries and strcuture of the data
+summary(tea_time)
+str(tea_time)
+
+```
+
+
+```{r}
+#visualize the dataset
+gather(tea_time)%>% ggplot(aes(value))+
+  facet_wrap("key", scales= "free")+
+  geom_bar()+theme(axis.text.x = 
+                     element_text(angle = 45, hjust = 1, size = 8))
+
+```
+
+```{r}
+#* Multiple Correspondence Analysis
+mca<- MCA(tea_time, graph = FALSE)
+#summary of the model
+summary(mca)
+
+```
+
+
+```{r}
+#visualize MCA
+plot(mca, invisible=c("ind"), habillage="quali", graph.type="classic")
+
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
