@@ -1,3 +1,11 @@
+# Dimensionality reduction techniques
+
+Human dataset variables from [UNDP](http:hdr.undp.org/en/content/human-development-index-hdi).
+The data combines several indicators from most countries in the world.
+The variables in the dataset under two categories: Health and knowledge, and empowerment
+
+
+
 
 ```{r}
 
@@ -8,13 +16,26 @@ library(corrplot)
 library(ggplot2)
 #Load the human data 
 human<- read.csv("human.csv", header = TRUE)
+str(human)
 ```
 
+The dataset contains 155 observation of 8 variables namely  
+
+* "GNI" = Gross National Income per capita  
+* "Life.Exp" = Life expectancy at birth  
+* "Edu.Exp" = Expected years of schooling  
+* "Mat.Mor" = Maternal mortality ratio  
+* "Ado.Birth" = Adolescent birth rate  
+* "Parli.F" = Percentage of female representative in parliament  
+* "Edu2.FM" = Ratio of female (Edu2.F) against males (Edu2.M) with at least secondary education  
+* "Labo.FM" = Ratio of females(Labo2.F) aganist males (Labo2.M) in the labour force  
+
+
 ```{r}
-str(human)
 summary(human)
 ```
 
+The variables have varying mean values
 
 ```{r}
 #plot matrix of the variables
@@ -29,9 +50,11 @@ pairs(human)
 cor_matrix<- cor(human) %>% round(digits = 2)
 #print the correlation matrix
 cor_matrix
-
 ```
 
+From the matrix,  
+* **Life.Exp and Mat. Mor** are highly negatively corrected (corr = -0.86)  
+* **Edu.Exp and Life.Exp** are positively correlated (corr = 0.79)   
 
 ```{r}
 #visualize the correlation matrix
@@ -39,20 +62,39 @@ corrplot(cor_matrix, method="circle",type= "upper",
          cl.pos="b", tl.pos="d",tl.cex=0.6)
 
 ```
-#*in the data. Describe and interpret the outputs, commenting on the distributions
-#*of the variables and the relationships between them
+
+From the visualization plot,  
+
+* The relationship between **Life.Exp and Mat.Mor** is represented by a big dark red circle indicating a strong negative correlation between the two variables.  
+* **Life.Exp and Edu.Exp** tends to have positive correlation relationship.  
+* **Labo.FM, GNI and Parli.F** variables have the least correlation with other variables. 
+
+### Perfroming Principal Component Analysis  
+
+Principal component analysis (PCA) is used to summarize and visualize the information in a data set containing observations described by multiple inter-correlated quantitative variables.
 
 
+PCA is used to extract the important information from multivariate data table and to express this information as set of few new variables called principal components. These new variables correspond to linear combination of the originals. The number of principal components is less than or equal to the number of original variables.  
+The goal of PCA is to identify directions (or principal components) along which the variation in the data is maximal.
 
+Main purpose of principal component analysis is to:
+
+* Reduce the dimensionality of data to two or three principal component, that can be visualized graphically, with minimal loss of information.  
+* Identify correlated variables.  
+* Identify hidden pattern in a data set
+
+#### 1.PCA on non-standardized human data  
 ```{r}
-#*Perform PCA on the not standardized human data. 
 pca_human<- prcomp(human)
 #print summary of the pca_human
 s<-summary(pca_human)
 s
-
 ```
-#*show the variability captured by the principal component
+
+PC1 has the highest variance at 0.9416 while PC8 had the least at 0.0.  
+PC1, PC2 and PC3 contribute 99.69% of the cumulative variability 
+
+#### 2. Show the variability captured by the principal component
 
 ```{r}
 #round the percentage of variance captured by each PC
@@ -60,37 +102,34 @@ pca_pr<-round(100*s$importance[2,],
               digits = 1)
 #print out the percentages of variance
 pca_pr
-
-
 ```
 
+The percentage of the variance of all the components
 
+### 3. Draw a bipot displaying the observation by the first two principal components 
 
-#*draw a bipot displaying the observation by the first two principal components (
-#*PC1 coordinate in x-axis, PC2 coordinate in y-axis),
-#* along with arrows representing the original variables
 ```{r}
 #create object pc_lab to be used as axis labels
 pc_lab<- paste0(names(pca_pr), "(",pca_pr,"%)")
 
 biplot(pca_human, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2"),
        xlab=pc_lab[1],ylab= pc_lab[2])
-
-
 ```
-#Maternal Mortality is the most influential variable in PC1, whereas in PC2 its GNI
 
-#*standardize the variables in the human data and repeat the above analysis
+From the principal component analysis, using the first two principal components, variance of PC1 is 94.2% while PC2 is 4.1%.**Maternal Mortality** is the most influential variable in PC1, whereas in PC2 its **GNI**, the two variables are not correlated. In addition, maternal mortality are also the most influential variable in the data set as it has the longest arrow.  
+
+#### 4. Standardize the variables in the human data and perfrom PCA analysis
+
 ```{r}
 human_std<- scale(human)
 #check the summaries of the standardized variables
 summary(human_std)
-
 ```
 
-#perform principal component analysis (with SVD method)
-```{r}
+The **mean** of all the variables have been scaled to **zero**.  
 
+#### 5. Perform principal component analysis (with SVD method)
+```{r}
 pca_human_std<-prcomp(human_std)
 #print summary of the pca_human
 s1<-summary(pca_human_std)
@@ -98,7 +137,9 @@ s1
 
 ```
 
-#*show the variability captured by the principal component
+PC1 had the highest variance at 0.48 compared to PC8 at 0.013
+
+#### 6.Show the variability captured by the principal component
 ```{r}
 #round the percentage of variance captured by each PC
 pca_pr1<-round(100*s1$importance[2,],
@@ -108,8 +149,9 @@ pca_pr1
 
 ```
 
+Percentage of the variance of the components generated, with PC1 at 48.3% while the least PC8 at 1.4%.  
 
-#draw biplot of the principal component representation and the original variables
+#### 7. Draw biplot of the principal component representation and the original variables
 ```{r}
 #create object pc_lab to be used as axis labels
 pc_lab1<- paste0(names(pca_pr1), "(",pca_pr1,"%)")
@@ -119,11 +161,18 @@ biplot(pca_human_std, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2
        xlab=pc_lab1[1],ylab= pc_lab1[2])
 
 ```
-#*Interpret the results of both analysis (with and without standardizing). 
-#*Are the results different?why or why not? 
-#*Include captions (brief description) in your plots where you describe the 
-#*results by using not just your variable names but the actual phenomenon they relate to
 
+From the plot:  
+
+* Using the first two PCs, PC1 has a variance of 48.3% while PC2 has a variance of 16.2%. 
+* In PC1, **Mat.Mor** and **Ado.Birth** are positively correlated as the angle between them is minimal. However, **Mat.Mor** is more influential compared to **Ado.Birth**, based on the length of the arrow.  
+* **Edu.Exp, Edu2.FM and fe.Exp** are negatively correlated  to Mat.Mor and Ado.Birth in PC1.  
+* In **PC2** variables **Parli.F** and **Labo.FM** were the influential variables
+
+#### Comparion between the standardized and non standardized human data PCA results  
+
+* Are the results different? The results are different.  
+* why or why not? Non-standardized data have high variance or variability compared to the standardized data because standardized variables have **standard deviation of one** and **mean is zero**. PCA from scaled variables are comparable and not affected by noise and outliers in the data.  
 
 
 #*Give your personal interpretation of the first two principal
@@ -131,49 +180,69 @@ biplot(pca_human_std, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2
 #* PCA on th standardized human data
 
 
-### MCA
+### Multiple Correspondence Analysis (MCA)
+
+MCA is used for summarizing and visualizing a data table containing more than two categorical variables.  
+The goal of MCA is to identify the association between variable categories. 
+
+Using dataset _tea_ from the _FactoMineR_ package.
+
+The tea data consist tea consumers survey about their consumption of tea.The questions were about how they consume tea, how they think of tea and descriptive questions(sex, age, socio-professional category and sport practise).  
+
 ```{r}
 #*Load the tea dataset from the package Factominer
 library(FactoMineR)
 library(ggplot2)
 library(tidyr)
 data("tea")
-
-```
-#* 300 tea consumers have answered a survey about their consumption of tea.
-#* the questions were about how they consume tea, how they think of tea 
-#* and descriptive questions(sex, age, socio-professional 
-#* category and sport practise).
-#* Except of the age, all variables are categorical.
-
-```{r}
 #*Look at the structure and dimensions of the data 
 str(tea)
-dim(tea)
-
 ```
+
+The dataset contains 300 observations of 36 variables, except of the age, all variables are categorical.
 
 
 ```{r}
-#columns to kep in the dataset
+
+
+
+```
+
+#### Select specific columns (variables)
+
+```{r}
+#columns to keep in the dataset
 keep_columns<- c("Tea","How","how","sugar","where","lunch")
 #select the keep_columns to create a new dataset
 tea_time<- dplyr::select(tea, one_of(keep_columns))
-#look at the summaries and strcuture of the data
+#look at the summaries and structure of the data
 summary(tea_time)
 str(tea_time)
 
 ```
 
+The selected columns had 2-4 levels of categorization.
+
+##### Visualizing the data set
+
+Visualize the selected columns.  
 
 ```{r}
-#visualize the dataset
 gather(tea_time)%>% ggplot(aes(value))+
   facet_wrap("key", scales= "free")+
   geom_bar()+theme(axis.text.x = 
                      element_text(angle = 45, hjust = 1, size = 8))
 
 ```
+
+* how: tea bag  had the highest count
+* How: alone had the highest count while others were the least  
+* lunch: Most tea consumer preferred to consume tea at other time than lunch.  
+* Sugar: The consumer count who preferred no sugar in their tea was slightly higher than those who added sugar.  
+* Tea: Earl Grey tea was the most preferred tea while green tea was the least.  
+* where: Most of the tea consumers boought their tea from chain store with the least from tea shop
+
+#### Multiple Correspondence Analysis
 
 ```{r}
 #* Multiple Correspondence Analysis
@@ -198,6 +267,6 @@ plot(mca, invisible=c("ind"), habillage="quali", graph.type="classic")
 
 
 ```{r}
-
+date()
 
 ```
