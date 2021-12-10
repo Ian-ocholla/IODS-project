@@ -6,7 +6,7 @@ The variables in the dataset under two categories: Health and knowledge, and emp
 
 
 
-### 1. Load the data and libraries
+## 1. Load the data and libraries
 ```{r}
 
 #set the workdirectory
@@ -30,8 +30,8 @@ The dataset contains 155 observation of 8 variables namely
 * "Edu2.FM" = Ratio of female (Edu2.F) against males (Edu2.M) with at least secondary education  
 * "Labo.FM" = Ratio of females(Labo2.F) aganist males (Labo2.M) in the labour force  
 
-### 2. Data exploration and visualization  
-#### 2.1 Summary of the data variables
+## 2. Data exploration and visualization  
+### 2.1 Summary of the data variables
 
 ```{r}
 summary(human)
@@ -39,14 +39,19 @@ summary(human)
 
 The variables have varying mean values
 
-#### 2.2 Matrix of the variables
+### 2.2 Matrix of the variables
 ```{r}
 #plot matrix of the variables
-pairs(human)
+library(GGally)
+library(dplyr)
+library(corrplot)
+
+#visualize the human varibles
+ggpairs(human)
 
 ```
 
-#### 2.3 Correlation matrix
+### 2.3 Correlation matrix
 ```{r}
 #create a correlation matrix to show the correlation 
 #between variables in the data
@@ -60,7 +65,7 @@ From the matrix,
 * **Life.Exp and Mat. Mor** are highly negatively corrected (corr = -0.86)  
 * **Edu.Exp and Life.Exp** are positively correlated (corr = 0.79)   
 
-#### 2.4 Visualize the correlation matrix
+### 2.4 Visualize the correlation matrix
 ```{r}
 #visualize the correlation matrix
 corrplot(cor_matrix, method="circle",type= "upper",
@@ -74,7 +79,7 @@ From the visualization plot,
 * **Life.Exp and Edu.Exp** tends to have positive correlation relationship.  
 * **Labo.FM, GNI and Parli.F** variables have the least correlation with other variables. 
 
-### 3. Perfroming Principal Component Analysis  
+## 3. Perfroming Principal Component Analysis  
 
 Principal component analysis (PCA) is used to summarize and visualize the information in a data set containing observations described by multiple inter-correlated quantitative variables.
 
@@ -93,7 +98,7 @@ Main purpose of principal component analysis is to:
 * Identify correlated variables.  
 * Identify hidden pattern in a data set
 
-#### 3.1.PCA on non-standardized human data  
+### 3.1.PCA on non-standardized human data  
 ```{r}
 pca_human<- prcomp(human)
 #print summary of the pca_human
@@ -104,7 +109,7 @@ s
 PC1 has the highest variance at 0.9416 while PC8 had the least at 0.0.  
 PC1, PC2 and PC3 contribute 99.69% of the cumulative variability. The PC variance decreases as the number of components increase
 
-#### 3.2. Show the variability captured by the principal component
+### 3.2. Show the variability captured by the principal component
 
 ```{r}
 #round the percentage of variance captured by each PC
@@ -116,7 +121,7 @@ pca_pr
 
 The percentage of the variance of all the components
 
-#### 3.3. Draw a bipot displaying the observation by the first two principal components 
+### 3.3. Draw a bipot displaying the observation by the first two principal components 
 
 ```{r}
 #create object pc_lab to be used as axis labels
@@ -129,7 +134,7 @@ biplot(pca_human, choices = 1:2, cex = c(0.8,1), col = c("grey40","deeppink2"),
 From the principal component analysis, using the first two principal components, variance of PC1 is 94.2% while PC2 is 4.1%. This means that majority of variance from the features in the original data are contained in PC1.  
 **Maternal Mortality** is the most influential variable in PC1, whereas in PC2 its **GNI**, the two variables are not correlated, as the angle between them is almost right angle. In addition, maternal mortality are also the most influential variable,*highest standard deviation*, in the data set as it has the longest arrow.  
 
-#### 3.4 Standardize the variables in the human data and perfrom PCA analysis
+### 3.4 Standardize the variables in the human data and perfrom PCA analysis
 
 ```{r}
 human_std<- scale(human)
@@ -139,7 +144,7 @@ summary(human_std)
 
 The **mean** of all the variables have been scaled to **zero**.  
 
-#### 3.5 Perform principal component analysis (with SVD method)
+### 3.5 Perform principal component analysis (with SVD method)
 ```{r}
 pca_human_std<-prcomp(human_std)
 #print summary of the pca_human
@@ -150,7 +155,7 @@ s1
 
 PC1 had the highest variance at 0.48 compared to PC8 at 0.013
 
-#### 3.6.Show the variability captured by the principal component
+### 3.6.Show the variability captured by the principal component
 ```{r}
 #round the percentage of variance captured by each PC
 pca_pr1<-round(100*s1$importance[2,],
@@ -162,7 +167,7 @@ pca_pr1
 
 Percentage of the variance of the components generated, with PC1 at 48.3% while the least PC8 at 1.4%.  
 
-#### 3.7. Draw biplot of the principal component representation and the original variables
+### 3.7. Draw biplot of the principal component representation and the original variables
 ```{r}
 #create object pc_lab to be used as axis labels
 pc_lab1<- paste0(names(pca_pr1), "(",pca_pr1,"%)")
@@ -181,7 +186,7 @@ From the plot:
 * **Edu.Exp, Edu2.FM and Life.Exp** are negatively correlated  to Mat.Mor and Ado.Birth in PC1.  
 * In **PC2** variables **Parli.F** and **Labo.FM** were the influential variables
 
-#### 3.8 Comparion between the standardized and non standardized human data PCA results. Give your personal interpretation.On the the first two principal component dimensions based on the biplot drawn after PCA on th standardized human data  
+### 3.8 Comparion between the standardized and non standardized human data PCA results. Give your personal interpretation.On the the first two principal component dimensions based on the biplot drawn after PCA on th standardized human data  
 
 * Are the results different? The results are different. 
 
@@ -189,7 +194,7 @@ From the plot:
 
 
 
-### 4. Multiple Correspondence Analysis (MCA)
+## 4. Multiple Correspondence Analysis (MCA)
 
 MCA is dimensionality reduction method that is used to analyse the pattern of relationship of several categorical variables.  
 The goal of MCA is to identify the association between variable categories. 
@@ -198,7 +203,7 @@ Using dataset _tea_ from the _FactoMineR_ package.
 
 The tea data consist tea consumers survey about their consumption of tea.The questions were about how they consume tea, how they think of tea and descriptive questions(sex, age, socio-professional category and sport practise).  
 
-#### 4.1 Load the data
+### 4.1 Load the data
 ```{r}
 #*Load the tea dataset from the package Factominer
 library(FactoMineR)
@@ -219,7 +224,7 @@ The dataset contains 300 observations of 36 variables, except of the age, all va
 
 ```
 
-#### 4.2 Select specific columns (variables)
+### 4.2 Select specific columns (variables)
 
 ```{r}
 #columns to keep in the dataset
@@ -234,7 +239,7 @@ str(tea_time)
 
 The selected columns had 2-4 levels of categorization.
 
-##### 4.3 Visualizing the data set
+### 4.3 Visualizing the data set
 
 Plot the frequency of the variable categories 
 
@@ -255,7 +260,7 @@ From the plots:
 * Tea: Earl Grey tea was the most preferred tea while green tea was the least.  
 * where: Majority of the tea consumers bought their tea from chain store with the least from tea shop
 
-#### 4.4 Multiple Correspondence Analysis
+### 4.4 Multiple Correspondence Analysis
 
 ```{r}
 #* Multiple Correspondence Analysis
@@ -284,8 +289,8 @@ print(mca)
 
 ```
 
-#### 4.5 Visualization and interpretation of MCA
-##### 4.5.1 Eigenvalues / variance
+### 4.5 Visualization and interpretation of MCA
+### 4.5.1 Eigenvalues / variance
 
 ```{r}
 #Visualize the proportion of variance retained by different dimensions 
@@ -296,7 +301,7 @@ head(eig.val)
 
 Dimension 1 had the highest eigenvalue (0.279) and variance percentage at 15.23%. The variance percentage decreased as the dimension increased, while the cumulative variance percentage increased.
 
-##### 4.5.2 Visualize the percentages of inertial explained by each MCA dimensions
+### 4.5.2 Visualize the percentages of inertial explained by each MCA dimensions
 
 ```{r}
 fviz_screeplot(mca, addlabels = TRUE, ylim=c(0,45))
@@ -305,7 +310,7 @@ fviz_screeplot(mca, addlabels = TRUE, ylim=c(0,45))
 
 The plot displays how the percentage of variances was distribution across the dimensions. The variance % declined as dimension increased.  
 
-##### 4.5.3 visualize the biplot of individual and variable categories
+### 4.5.3 visualize the biplot of individual and variable categories
 ```{r}
 fviz_mca_biplot(mca,
                 repel = TRUE, 
@@ -317,7 +322,7 @@ The plot shows a global pattern within the data. Rows (individuals) are represen
 
 The distance between any row points or column points gives a measure of their similarity (or dissimilarity). Columns such are tea bag, sugar, chain store and alone have similarity based on the short distnace between them. Compared to variables such as green, tea shop and other. 
 
-##### 4.5.4Visualization of the correlation between variables and principal dimensions.  
+### 4.5.4Visualization of the correlation between variables and principal dimensions.  
 
 ```{r}
 fviz_mca_var(mca, choice = "mca.cor",
@@ -332,7 +337,7 @@ From the plot:
 * The variable _**sugar**_ is the most correlated variable with dimension 1.  
 * Variable _**lunch**_ is the most correlated variable with dimension 2.  
 
-##### 4.5.5 Coordinates of variable categories
+### 4.5.5 Coordinates of variable categories
 
 Visualizes the variables which belong to similar group and if they are positively or negatively correlated.  
 
@@ -355,7 +360,7 @@ From the plot:
 * Negatively correlated variables categories are positioned on opposite sides of the plot origin. For example group 1 and 2 are negatively correlated
 * The distance between category points and the origin measures the quality of the variable category on the factor map. Category points that are away from the origin such as _unpackaged, tea shop , other and chain store + tea shop_ are well represented on the factor map, compared to variables closer to the origin such as _Not lunch, No sugar, sugar and alone_.
 
-##### 4.5.6 MCA factor plot map
+### 4.5.6 MCA factor plot map
 ```{r}
 #visualize MCA
 plot(mca, invisible=c("ind"), habillage="quali", graph.type="classic")
@@ -365,11 +370,11 @@ plot(mca, invisible=c("ind"), habillage="quali", graph.type="classic")
 MCA factor map shows the distribution of the variables across the two dimension and how far they are from the origin. Variables closer to the origin has little influence or contribute little to the variability of the dimension.
 
 
-##### 4.5.7 Contribution of variable categories to the dimensions
+### 4.5.7 Contribution of variable categories to the dimensions
 
 The variable categories with the larger value contribute the most to the definition of the dimensions. These variables are the most important in explaining the variability in the data set. 
 
-##### 4.5.7.1 Contribution of rows to dimension 1
+### 4.5.7.1 Contribution of rows to dimension 1
 ```{r}
 
 fviz_contrib(mca, choice= "var", axes=1, top= 20) # top 20 variable categories
@@ -378,7 +383,7 @@ fviz_contrib(mca, choice= "var", axes=1, top= 20) # top 20 variable categories
 In Dimension 1, **tea shop, unpackaged , tea bag and chain store** are the most important variables in explaining variability in dimension 1 with **tea shop** being the most important variable contributing approximately **25%** of Dimension 1 variability.
 
 
-##### 4.5.7.2 Contribution of rows to dimension 2 
+### 4.5.7.2 Contribution of rows to dimension 2 
 
 ```{r}
 fviz_contrib(mca, choice= "var", axes = 2, top = 20)
