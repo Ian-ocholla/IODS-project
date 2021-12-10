@@ -1,1 +1,363 @@
 
+
+Wide data has a column for each variable whereas long format data has a column for possible variable type & a column for the values of those variables
+
+1. Plot the BPRS values for all 40 men, differentiating between the treatment groups into which the mean have been randomized- Fig 8.1: BPRS score of almost the men is decreasing over the eight weeks of the study. secondly, the men who have higher BPRS values at the beginning tend to have higher values throughout the study.-This phenomenon is referred to as tracking. Thrid, there are substabtial individualdifferences and variability appears to decrease with time.
+
+## Chapter 8
+Graphical display of Longitudinal data
+
+graphical displays are useful for exposing patterns in the data
+Display the data in table format
+glimpse(RATSL)
+
+#Task1: plot  the RATS values for all 11 rats (WD), differentiating between the groups into which the rats have been randomized
+
+solution: weights score varied within the groups across the 9 weeks.
+Rats in group 2 had the highest weight maintain throughout the period
+In group 3: the weights tend to increase as period increased
+In group 1: the weight ws relatively maintained across the period
+
+#task 2: standardize values of each observation
+i.e. value obtained by subtracting the relevant occassion mean from the original observation and then dividing by the corresponding standard deviation
+
+##plot the standardize values
+solution: the mean of group 2 and group 3 at 1 suggests a small difference between the two groups compared to group 1 whose mean is -1.
+
+
+#task 3 (Figure 8.2): plotting the mean profiles as side by side plots of the observation at diff time (Time aganist standardize weights)
+soln: check-
+#task 4 (Figure 8.3): mean reponse profiles for the two treatment groups in Rats data (plot of time aganist mean(weight)+/- se(weight))
+
+#task5 (figure 8.4): boxplot time aganist weight 
+check if there are outliers in the weights across the time period
+
+#summary measure approach applied to the post weight of rats
+#task 6: calculate the measure and then look at boxplots of the measure for each group 
+
+(Figure 8.5)- boxplot of group against mean(weight), Time(8-64)
+
+soln: indicates the mean summary measure- which one is skewed? which one has outlier
+Decide weight score should be removed?
+
+Figure 8.6: plot boxplot without the outlier- is there evidence of a difference in location of the summary measure distributions in each group.
+
+#require a formal test for a difference between the three groups
+#apply a t-test to assess any difference between the groups and also calculate a condifence interval for this difference.
+
+#use the data without the outlier (fig 8.5) to generate Table 8.3
+Does the t-test confirms the lack of any evidence for a group difference
+what is the range of CI, does it include zero.
+
+#Incoporating pre-weight outcome values into the summary measure approach
+
+#analysis of covariance
+Weight taken prior to start of the program as baseline covariate
+
+#Table 8.4. Anlaysis of covariance of the RATS datawith baseline RATS and Groups as covariates
+
+Is the baseline strongly related to the rats weight taken after program started
+
+
+#dealing with missing values when using summary measure approach
+
+#table 8.5. 
+
+
+#Chapter 9: Analysis of Longitudinal Data II: Linear Mixed Effects Models for Normal Response Variables
+
+## fitting the independence model to the BPR data
+
+Figure 9.1 plot the data, identifying the observation in each group but ignoring the longitudinal nature
+Is there a difference between the bprs of treatment 1 and treatment 2
+
+#fitting Linear Mixed Models to the bprs data
+
+Figure 9.2: graphical display of the bprs data takes into account the longitudinal structure of the data by joining together the weights belonging to each man to show the bprs growth profilesof individuals men
+
+Figure 9.3: scatterplot matrix of the repeated meaures of bprs
+does the repeated measured are certainly not independent of one another.
+
+# beigin formal analysis of the weight data
+1. fit the random intercept model and include the two explanatory variables: week and  treatment
+- model allows the linear regresion fit for each man to differ in intercept from men
+#Table 9.4 : results of the regresion model
+Is the estimated variance of the man random effects quite large or small?
+if large- it indicates the considerable variation in the intercept of the regression fits of the individual subject treatment profile
+-check if the estimated error of week is smaller in table 9.4 than it is in table 9.3
+
+#Figure 9.3 scatterplot matrix of repeated measure in subject treatment data
+
+#Table 9.5 result from fitting the random intercept and slope model to the man treatment data
+check the fixed effects, likeliood ratio test, chi-squared statistics and degree of freedom and the associated p-value (big or very small?)
+
+#fit a random intercept and slope model that allows  treatment group x week interaction
+
+#Table 9.6: table of the model results
+what is the likelihood ratio test of the interaction random intercept and slope model aganist the corresponding model without interaction is... with ..DF, what is the associated p-value (big or small). Conclude if the interaction model provides a better fit for the men treatment data.
+what is the estimated regression parameters for interaction indicate...between the two groups..
+
+#find the fitted values from the interaction model and plot the fitted growth rates for each rat
+#Figure 9.4 observed vs fitted plots
+
+
+```{r}
+# libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
+
+```{r}
+# This is a so-called "R chunk" where you can write R code.
+
+date()
+
+```
