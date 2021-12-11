@@ -1,11 +1,10 @@
-
+# Longitudinal Data Anlaysis 
 
 Wide data has a column for each variable whereas long format data has a column for possible variable type & a column for the values of those variables
 
-1. Plot the BPRS values for all 40 men, differentiating between the treatment groups into which the mean have been randomized- Fig 8.1: BPRS score of almost the men is decreasing over the eight weeks of the study. secondly, the men who have higher BPRS values at the beginning tend to have higher values throughout the study.-This phenomenon is referred to as tracking. Thrid, there are substabtial individualdifferences and variability appears to decrease with time.
 
-## Chapter 8
-Graphical display of Longitudinal data
+
+
 
 graphical displays are useful for exposing patterns in the data
 Display the data in table format
@@ -33,9 +32,7 @@ what is the range of CI, does it include zero.
 #analysis of covariance
 Weight taken prior to start of the program as baseline covariate
 
-#Table 8.4. Anlaysis of covariance of the RATS datawith baseline RATS and Groups as covariates
 
-Is the baseline strongly related to the rats weight taken after program started
 
 
 #dealing with missing values when using summary measure approach
@@ -45,7 +42,6 @@ Is the baseline strongly related to the rats weight taken after program started
 
 
 
-# Chapter 8
 ```{r}
 # libraries
 library(dplyr)
@@ -54,6 +50,9 @@ library(ggplot2)
 library(lme4)
 
 ```
+## Chapter 8: Analysis of Longitudinal Data I: Graphical Displays Summary Measure Approach
+
+
 
 ## Load the data and check the variables and structure
 ```{r}
@@ -183,6 +182,10 @@ ggplot(RATSL, aes(x= factor(Time), y = Weight,
 
 ```
 
+#Table 8.4. Anlaysis of covariance of the RATS datawith baseline RATS and Groups as covariates
+
+Is the baseline strongly related to the rats weight taken after program started
+
 #summary measure approach applied to the post weight of rats
  
 
@@ -249,34 +252,16 @@ date()
 ```
 
 
+## Chapter 9: Analysis of Longitudinal Data II: Linear Mixed Effects Models for Normal Response Variables
 
+Longitudinal data, where a response variable is measured on each subject on different occasions poses a challenge as repeated measurement often are likely correlated rather than independent. 
 
-#Chapter 9: Analysis of Longitudinal Data II: Linear Mixed Effects Models for Normal Response Variables
+To test how linear mixed effect models are applied data taken from Davis 2002 will be used. It comprises of 40 male subjects who were randomly assigned to **one or two treatment** groups and each subject was rated on the **Brief Psychiatric Rating Scale (BPRS)** measured before treatment began **(week 0)** and then at weekly interval for **eight weeks**. The BPRS assesses the level of 18 symptoms construct such as hostility, suspiciousness, hallucinations and grandiosity; each of these is rated from one (not presented) to seven (extremely severe). The scale is used to evaluate patients suspected of having schizophrenia.
+The question of most interest is whether BPRS differs in the two treatments differ
+ 
+### 9.3.1 Fitting the independence Model to the BPRS Data
 
-## fitting the independence model to the BPR data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#fit a random intercept and slope model that allows  treatment group x week interaction
-
-
-
-#find the fitted values from the interaction model and plot the fitted growth rates for each rat
-#Figure 9.4 observed vs fitted plots
-
-
-Table 9.1 BPR treatment recorded over xyz period
+Load the data, ignoring the repeated-measure structure of the data and assume that all the observation are independent of one another 
 ```{r}
 #set working directory
 setwd("C:/LocalData/ocholla/IODS-project/Data")
@@ -292,23 +277,25 @@ BPRS<- within(BPRS, {
 BPRS$ID<- seq.int(nrow(BPRS))
 glimpse(BPRS)
 
-
 ```
 
-Table 9.2 conversion of data to long form
+The data is in wide form format, it needs to be converted to long form to be used for analysis
 
+
+1. Convert the data to long form
 ```{r}
-#Convert the data to long form
+
 BPRSL<- gather(BPRS, key = weeks, value = bprs, week0:week8) %>%
   #extract the week number- adding the variable week into the dataset
   mutate(week = as.integer(substr(weeks, 5, 5)))
 #take a glimpse at the BPRSL data
 glimpse(BPRSL)
 head(BPRSL);tail(BPRSL)
-
 ```
+When we ignore the set of 9 bprs measurements come from the same subject, we have 360 bprs, weeks and treatment that can be easily analysed by using multiple linear regression
 
-# Figure 9.1 plot the data, identifying the observation in each group but ignoring the longitudinal nature
+
+Plot the data, identifying the bprs observation in each treatment but ignoring the longitudinal nature of data
 ```{r}
 ggplot(BPRSL, aes(x = week, y = bprs, group = ID))+
   geom_text(aes(label = treatment))+
@@ -320,28 +307,36 @@ ggplot(BPRSL, aes(x = week, y = bprs, group = ID))+
           element_blank())
 
 ```
-Figure 9.1 
-Is there a difference between the bprs of treatment 1 and treatment 2
+
+In general, BPRS decreases in both treatment 1 &2  as the number of weeks increased. 
+Men who have higher BPRS values at the beginning tend to have higher values throughout the study.
 
 
-# Table 9.3
-# beigin formal analysis of the weight data
-1. fit the random intercept model and include the two explanatory variables: week and  treatment
-- model allows the linear regresion fit for each man to differ in intercept from men
+#### Fit a multiple linear regression model
+
+Fit a multiple linear regression model with bprs as response and week and  treatment as explanatory variables.
+
 ```{r}
-#create a regression model RATS_reg
+
+#create a regression model BPRS_reg
 BPRS_reg<- lm(bprs ~ week + treatment, data = BPRSL)
 #summary 
 summary(BPRS_reg)
 
+
 ```
 
-#fitting Linear Mixed Models to the bprs data
+From the model, the week variable is highly significant (p<0.5) and negatively correlated to BPRS measure. Implying that with increase in weeks, the BPRS decreased.
+Treatment 2 is not significant when holding Treatment 1 as a constant.
+The two explanatory variables explained approximately 18% of BPRS variability.
+This model (multiple linear regression) assumes independence of the repeated measures of BPRS, and thus assumption is highly unlikely.
 
-Figure 9.2: graphical display of the bprs data takes into account the longitudinal structure of the data by joining together the weights belonging to each man to show the bprs growth profilesof individuals men
-# Figure 9.2 
+### 9.3.2 Fitting Linear Mixed Models to the BPRS data
+
+A graphical display of the bprs data takes into account the longitudinal structure of the data by joining together the bprs measures belonging to each man. 
+
 ```{r}
-#figure 9.2
+#Figure 9.2 plot of individual rat growth profiles
 ggplot(BPRSL, aes(x= week, y = bprs, group= ID))+ #subject
   geom_line(aes(linetype= treatment))+
   scale_x_continuous(name= "Weeks (number)", breaks = seq(0,8,1))+
@@ -352,22 +347,24 @@ ggplot(BPRSL, aes(x= week, y = bprs, group= ID))+ #subject
 
 ```
 
+From the plot, there is a general decline in bprs across all men as the number of weeks increased.
 
-#Figure 9.3 scatterplot matrix of repeated measure in subject treatment data
+
+A scatterplot matrix of repeated measures of BPRS to assess the independence of the repeated measures
 
 ```{r}
 pairs(BPRS[, 3:11], cex = 0.7)
 
 ```
-Figure 9.3: scatterplot matrix of the repeated meaures of bprs
-does the repeated measured are certainly not independent of one another.
+
+From the scatter plot: The repeated measures of bprs are not independent of one another.They are correlated with one another.
 
 
-#Table 9.4
+
+To begin more formal analysis of the BPRS rate, first fit the random intercept model and include the two explanatory variables.
+
 ```{r}
 #create a random intercept model
-# ID need to be similar as subject
-#varied ID with Subject
 BPRS_ref<- lmer(bprs ~ week + treatment + (1 | ID), data =  BPRSL, REML = FALSE)
 
 #print the summary of the model
@@ -375,8 +372,7 @@ summary(BPRS_ref)
 
 ```
 
-#Table 9.4 : results of the regresion model
-Is the estimated variance of the man random effects quite large or small?
+The estimated variance of the subject random effects (97.39) is not very large
 if large- it indicates the considerable variation in the intercept of the regression fits of the individual subject treatment profile
 -check if the estimated error of week is smaller in table 9.4 than it is in table 9.3
 
@@ -413,6 +409,8 @@ what is the estimated regression parameters for interaction indicate...between t
 
 
 ## Figure 9.4 
+#find the fitted values from the interaction model and plot the fitted growth rates for each rat
+#Figure 9.4 observed vs fitted plots
 
 ```{r}
 #create a vector of the fitted values
