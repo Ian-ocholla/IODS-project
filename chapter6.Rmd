@@ -131,7 +131,7 @@ ggplot(RATSL, aes(x= factor(Time), y = Weight,
 
 ```
 
-The plot suggest possibility of outliers in the weights, also the plot indicates again the general increase of rats weight across the study period in all the three groups
+The plot suggest absence of outliers in the weights, also the plot indicates again the general increase of rats weight across the study period in all the three groups
 
 #### Applying the summary measure approach
 
