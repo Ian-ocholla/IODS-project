@@ -6,7 +6,7 @@ The variables in the dataset under two categories: Health and knowledge, and emp
 
 
 
-## 1. Load the data and libraries
+## Load the data and libraries
 ```{r}
 
 #set the workdirectory
@@ -30,7 +30,8 @@ The dataset contains 155 observation of 8 variables namely
 * "Edu2.FM" = Ratio of female (Edu2.F) against males (Edu2.M) with at least secondary education  
 * "Labo.FM" = Ratio of females(Labo2.F) aganist males (Labo2.M) in the labour force  
 
-## 2. Data exploration and visualization  
+## Data exploration and visualization 
+
 ### 2.1 Summary of the data variables
 
 ```{r}
@@ -79,7 +80,7 @@ From the visualization plot,
 * **Life.Exp and Edu.Exp** tends to have positive correlation relationship.  
 * **Labo.FM, GNI and Parli.F** variables have the least correlation with other variables. 
 
-## 3. Perfroming Principal Component Analysis  
+## 3.0 Perfroming Principal Component Analysis  
 
 Principal component analysis (PCA) is used to summarize and visualize the information in a data set containing observations described by multiple inter-correlated quantitative variables.
 
@@ -218,11 +219,6 @@ str(tea)
 The dataset contains 300 observations of 36 variables, except of the age, all variables are categorical.
 
 
-```{r}
-
-
-
-```
 
 ### 4.2 Select specific columns (variables)
 
@@ -397,14 +393,6 @@ In dimension 2, variable **chain store +tea shop** is the most important variabl
   * unpackaged  
   * other  
   * green
-
-
-```{r}
-
-
-```
-
-
 
 ```{r}
 date()

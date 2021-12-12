@@ -1,4 +1,4 @@
-# LOGISTIC REGRESSION ANALYSIS
+# Logistic Regression Analysis
 
 
 In this exercise, we explore the use of **logistic regression analysis** on student achievement data in secondary education in two Portuguese schools. The data attribute include the student grades, demographic, social and school related features. The data was collected by using school reports and questionnaires. More information can be found in the [link](https://archive.ics.uci.edu/ml/datasets/Student+Performance)
@@ -7,6 +7,8 @@ Purpose of the analysis is to study the relationships between high/low alcohol c
 
 * 'alc_use is the average of 'Dalc' and 'Walc'  
 * 'high_use' is true if 'alc_use' is higher than 2 and FALSE otherwise  
+
+## Data exploration
 
 ### 1. Load and describe the student alcohol consumption data 
 
@@ -76,7 +78,7 @@ Among students with low alcohol consumption, the female students spent between 5
 
 On the contrary, female students with high alcohol consumption spent exactly  5 hours for their studies while the make students spent 2 to 5 hours.
 
-## 3. Fitting a logistics model
+##  Logistic regression model
 
 ```{r}
 #find the model with glm()
@@ -154,7 +156,7 @@ table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table%>% add
 Approximately 19% and 36%  were inaccurately predicted for the false and true values respectively by the model.  
 From the confusion matrix table, the accuracy of the prediction can be calculated through addition of True Negative and Positive (0.62 and 0.14) divided by the summation of both true and false values in both the original set (high_use) and prediction. we get that the prediction accuracy is 0.76, this is a high performance from the model compared to simple guessing strategies.    
 
-### 4. Cross validation
+## Cross validation
 This is a method of testing a predictive model on unseen data
 split the data into training and testing data, 
 whereby the training data is used to find the model 
@@ -190,7 +192,7 @@ cv$delta[1]
 
 The model had a CV of 0.23 which is much better than that in the DataCamp.
 
-**super bonus** 
+## Super bonus 
 Perform cross-validation to compare the performance of different logistic regression models (=different sets of predictors). Start with a very high number of predictors and explore the changes in the training and testing errors as you move to model with less predictors. draw a graph displaying the trends of both training and testing errors by the number of predictors in the model
 
 ```{r}

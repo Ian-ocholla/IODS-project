@@ -27,7 +27,7 @@ We load the dataset from the folder saved from Data wrangling exercise.We read t
 students2014<-read.csv("Data/learning2014.csv", header = TRUE, stringsAsFactors = TRUE)
 ```
 
-### 2. Data exploration and analysis
+## Data exploration and analysis
 
 We explore the data structure and its dimensions
 
@@ -38,12 +38,6 @@ dim(students2014)
 
 ```
 The data contains 166 observations of 7 variables. The observations refers to the students and the variables refer to student gender (male or female), age (derived the date of birth), exam points, attitude, deep learning (deep), strategic learning (stra) and surface learning (surf).
-
-```{r}
-
-
-
-```
 
 
 #### Summaries of the variables in the data
@@ -91,7 +85,8 @@ p
 From the scatter plot, across both gender the attitude of the student is highly correlated to the exam points attained. While there is higher likelihood of male students failing in deep learning compared to female students
 
 
-### 3.Regression model
+## Regression model
+
 Linear regression model is a statistical approach that is used for modelling relationships between a dependent variable **y** and one or more explanatory variables **X**. If there is only one explanatory variable then its called simple linear regression while in more than one variable it is referred as multiple linear regression.  
 Linear model is divided into two parts namely systematic and stochastic parts. The model follows the equation below
 $$Y \sim \propto + X\beta_1+X\beta_2.....\beta_k +\epsilon $$  
